@@ -1,0 +1,87 @@
+Microword Game Development
+I. Introduction
+A. Game Overview
+This game aims to simulate the challenges faced by an expert in a control center managing vehicle operations during a flood in a subway network. The player will be responsible for monitoring the subway system, making timely decisions to ensure the safe transportation of passengers, and minimizing the impact of the flood on the network.
+B. Objectives and Gameplay
+The primary objective of the game is to safely transport as many passengers as possible through the subway network during a flood event. The player will need to anticipate the rising water levels, make strategic decisions to stop, evacuate, or reverse trains, and coordinate the movement of vehicles to maintain efficient operations and minimize the number of trapped passengers.
+
+II. Game Design
+A. Game World and Mechanics
+Subway Network: The subway network will be represented as a square grid consisting of four intersecting lines (tentatively, later, there will be more network structures to be tested). Lines are discrete. Each line will have a number of stations and intermediate nodes, where trains can move from one node to the next.
+
+Flood Simulation: Flooding can occur anywhere in the network, and the water level can rise over time. The failure node can be random. At a time, the flooding water that gets into the subway system through the failure nodes has a certain prescribed relationship with the current rainfall intensity. The rainfall intensity can be random. These add elements of uncertainty for the player. 
+
+Each node is considered a cubic box. Different nodes have different dimensions of the boxes. The rising of the water level depends on the volume that gets in and the floorage. 
+
+Water can be propagated to nearby nodes. The speed of flood propagation depends on the slope of the edge connecting two nearby nodes.  
+
+Only the water level at each station is known as each station has the sensors, but the water level at nodes other than stations is unknown and needs to be anticipated by human players. Each node has pump equipment to pump out water. As long as the water level reaches a threshold, the pump will be activated automatically. 
+
+Train Movement and Spacing: Trains will be moving along the lines, and they must maintain a certain distance between each other to avoid collisions. If the spacing between trains falls below a critical threshold, the following trains must stop.
+
+B. Player Interaction and Decision-Making
+Time is discrete. At each time, before the decision, the user interface will display the following information to the human player:
+Water level readings at stations (visible through station sensors)
+Train positions and movements
+Passenger count at each station
+Passenger count in each train
+Rainfall intensity and prediction
+ At a time, with the above information, the player can make one of the following decisions:
+Monitoring: The player can choose to do nothing, allowing the trains to move normally along the network.
+Information requirements: 
+Stopping Trains: The player can choose to stop a specific train, which will also cause the trains behind it to stop as well.
+Information requirements: 
+Evacuating Passengers: If a train is stopped at a station, the player can choose to evacuate the passengers from that train.
+Information requirements: 
+Reversing Trains: The player can choose to reverse a stopped train, which will also cause the trains behind it to stop or reverse as well.
+Information requirements: 
+Start Trains: If the water level drops below the top of the track and it is safe to proceed ahead, the train can be restarted.
+Information requirements:
+
+At a time, the human player can make multiple different decisions on multiple trains. For example, stop Train A and start Train B.
+
+C. Scoring and Rewards
+Each decision will result in the following utility scores:
+Train Arrives on Time: +5 * Passenger Load (per train)
+Train Arrives Delayed: -5 * Passenger Load (per train)
+Train Stops and Evacuates Passengers: -15 * Passenger Load (per train)
+Train Stops and Traps People in Tunnel: -50 * Passenger Load (per train)
+
+
+III. Exogenous Parameter
+
+These parameters can be adjusted to control the overall difficulty, challenge, and balance of the game. These parameters are called exogenous parameters, that are not decided by the human player. By tuning these values, the developer can create different levels of complexity and increasing challenges for the player, allowing them to tailor the game experience as desired.
+
+Subway Network Parameters:
+Number of lines in the grid
+Number of stations per line
+Distance between stations (determining the number of intermediate nodes)
+Elevation of each node (station/intermediate node)
+Floorage of each node (each node is considered a cubic box)
+Slope between adjacent nodes
+Track height (distance from ground to top of track, Maximum water level that can submerge the tracks)
+Time schedule for train operation
+Flood Simulation Parameters:
+Initial flood starting node(s)
+Water volume that gets into the subway system through the failure node (has a relationship with current rainfall intensity)
+Water level rising rate (can be calculated by water volume that gets in and floorage)
+Minimum water level needed to start flowing to adjacent nodes
+Flow rate between adjacent nodes (affected by slope)
+Weather Parameters:
+Rainfall intensity (can affect water rising rate)
+Pump Parameters:
+Amount of water that can be pumped at each time interval (some major nodes might have better capacity)
+Minimum water level needed to activate the pumps
+Passenger Parameters:
+Passenger count at each station platform
+Passenger count in each train
+Passenger count that gets off from a specific train at a specific station
+Train Movement and Spacing Parameters:
+Number of trains per line
+Initial train positions
+Safe distance threshold between trains
+Player Decision-Making Parameters:
+Time limit for decision-making (e.g., 30 seconds)
+
+
+
