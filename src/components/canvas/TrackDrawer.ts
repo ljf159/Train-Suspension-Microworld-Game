@@ -64,13 +64,13 @@ export const drawTracks = (
       ctx.stroke();
 
       // Indicate failure point
-      if (node.isFailurePoint) {
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, (trackNodeRadius + 1) * scale, 0, Math.PI * 2);
-        ctx.strokeStyle = '#EF4444';
-        ctx.lineWidth = 1 * scale;
-        ctx.stroke();
-      }
+      // if (node.isFailurePoint) {
+      //   ctx.beginPath();
+      //   ctx.arc(node.x, node.y, (trackNodeRadius + 1) * scale, 0, Math.PI * 2);
+      //   ctx.strokeStyle = '#EF4444';
+      //   ctx.lineWidth = 1 * scale;
+      //   ctx.stroke();
+      // }
 
       // Add elevation label
       ctx.fillStyle = '#FFF';

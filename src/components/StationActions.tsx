@@ -61,8 +61,9 @@ export const StationActions: React.FC<StationActionsProps> = ({
         <div>
           <h3 className="text-xl font-bold">Train {train.id}</h3>
           <span className="text-sm text-gray-400">Location: {location.name}</span>
+          <br />
+          <span className="text-sm text-gray-400">Status: {train.status}</span>
         </div>
-        <Train className="text-blue-400" />
       </div>
       
       <div className="space-y-2 mb-4">
@@ -78,25 +79,45 @@ export const StationActions: React.FC<StationActionsProps> = ({
 
       <div className="grid grid-cols-2 gap-2">
         {train.status === 'running' && (
-          <button
-            className={getButtonStyle('stop')}
-            onClick={() => handleAction('stop')}
-            disabled={clickedAction === 'stop'}
-          >
-            <Square size={16} />
-            Stop
-          </button>
+          <>
+            <button
+              className={getButtonStyle('stop')}
+              onClick={() => handleAction('stop')}
+              disabled={clickedAction === 'stop'}
+            >
+              <Square size={13} />
+              Stop
+            </button>
+            <button
+              className={getButtonStyle('reverse')}
+              onClick={() => handleAction('reverse')}
+              disabled={clickedAction === 'reverse'}
+            >
+              <RotateCcw size={13} />
+              Reverse
+            </button>
+          </>
         )}
         
         {train.status === 'stopped' && (
-          <button
-            className={getButtonStyle('start')}
-            onClick={() => handleAction('start')}
-            disabled={clickedAction === 'start'}
-          >
-            <Play size={16} />
-            Start
-          </button>
+          <>
+            <button
+              className={getButtonStyle('start')}
+              onClick={() => handleAction('start')}
+              disabled={clickedAction === 'start'}
+            >
+              <Play size={13} />
+              Start
+            </button>
+            <button
+              className={getButtonStyle('reverse')}
+              onClick={() => handleAction('reverse')}
+              disabled={clickedAction === 'reverse'}
+            >
+              <RotateCcw size={13} />
+              Reverse
+            </button>
+          </>
         )}
 
         {location.type === 'station' && (
@@ -105,19 +126,21 @@ export const StationActions: React.FC<StationActionsProps> = ({
             onClick={() => handleAction('evacuate')}
             disabled={clickedAction === 'evacuate'}
           >
-            <LogOut size={16} />
+            <LogOut size={13} />
             Evacuate
           </button>
         )}
 
-        <button
-          className={getButtonStyle('reverse')}
-          onClick={() => handleAction('reverse')}
-          disabled={clickedAction === 'reverse'}
-        >
-          <RotateCcw size={16} />
-          Reverse
-        </button>
+        {/* {train.status === 'running' || train.status === 'stopped' && (
+          <button
+            className={getButtonStyle('reverse')}
+            onClick={() => handleAction('reverse')}
+            disabled={clickedAction === 'reverse'}
+          >
+            <RotateCcw size={13} />
+            Reverse
+          </button>
+        )} */}
       </div>
     </div>
   );

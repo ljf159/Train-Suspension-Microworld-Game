@@ -57,7 +57,7 @@ export interface Train {
   nodePosition: number;
   capacity: number;
   direction: 'forward' | 'backward';
-  status: 'running' | 'stopped';
+  status: 'running' | 'stopped' | 'trapped';
   passengers: number;
   delayedRounds: number;
   lastMoveRound: number;
@@ -91,6 +91,7 @@ export interface PlayerSelectActionLog {
 }
 
 export interface GameLog {
+  setting?: GameSetting;
   id: number;
   round: number;
   timestamp: string;
@@ -101,6 +102,25 @@ export interface GameLog {
   scoreChange: number;
   totalScore: number;
   playerActions: PlayerSelectActionLog[]; // 新增玩家操作记录
+}
+
+export interface GameSetting {
+  failurePointCount: number;
+  failurePointFloodIncreaseBaseMu: number;
+  failurePointFloodIncreaseSigmaMin: number;
+  failurePointFloodIncreaseSigmaMax: number;
+  getOnAndOffRatioMin: number;
+  getOnAndOffRatioMax: number;
+  trappedThreshold: number;
+  floodWarningThreshold: number;
+  defaultDecisionTime: number;
+  delayScorePerPassenger: number;
+  evacuationScorePerPassenger: number;
+  trappedInTrackScorePerPassenger: number;
+  PROPAGATION_FLOOD_INCREASE: number;
+  PROPAGATION_THRESHOLD: number;
+  elevationDifferenceFactor: number;
+  floodDifferenceFactor: number;  
 }
 
 export interface TrainLogEntry {
@@ -114,13 +134,14 @@ export interface TrainLogEntry {
 
 export interface StationLogEntry {
   id: number;
-  floodLevelChange: number;
+  // floodLevelChange: number;
   currentFloodLevel: number;
   passengersChange: number;
   currentPassengers: number;
   pumpUsed: boolean;
   pumpThreshold: number;
   pumpRate: number;
+  isFailurePoint: boolean;
 }
 
 export interface TrackLogEntry {
@@ -133,8 +154,9 @@ export interface TrackLogEntry {
 
 export interface TrackNodeLogEntry {
   id: number;
-  floodLevelChange: number;
+  // floodLevelChange: number;
   currentFloodLevel: number;
+  isFailurePoint: boolean;
 }
 
 export interface GameState {

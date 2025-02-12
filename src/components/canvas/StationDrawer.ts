@@ -1,7 +1,7 @@
 import { Station, TrainLocation, Train } from '../../types/index';
 import { getCanvasScale } from '../../utils/canvasUtils';
 import { getElevationColor } from '../../utils/colorUtils';
-
+import { trappedThreshold, floodWarningThreshold } from '../../data/initialGameState';
 
 export const drawStations = (
   ctx: CanvasRenderingContext2D,
@@ -50,8 +50,14 @@ export const drawStations = (
       // ctx.fillText(station.name, station.x, station.y + stationRadius - 8 * scale);
       // ctx.textBaseline = 'top';
 
-      // Draw flood level
-      ctx.fillStyle = '#FFF';
+      // Draw flood level with color coding
+      if (station.floodLevel > trappedThreshold) {
+        ctx.fillStyle = '#EF4444'; // Red for over 50%
+      } else if (station.floodLevel > floodWarningThreshold) {
+        ctx.fillStyle = '#F59E0B'; // Yellow for over 40%
+      } else {
+        ctx.fillStyle = '#FFF';
+      }
       ctx.fillText(
         `${station.floodLevel.toFixed(1)}% (+${(station.increaseInThisRound ?? 0).toFixed(1)}) 🌊`,
         station.x - 7 * scale, 
@@ -152,7 +158,13 @@ export const drawStations = (
     }
 
     // 绘制聚合数据
-    ctx.fillStyle = '#FFF';
+    if (avgFloodLevel > trappedThreshold) {
+      ctx.fillStyle = '#EF4444'; // Red for over 50%
+    } else if (avgFloodLevel > floodWarningThreshold) {
+      ctx.fillStyle = '#F59E0B'; // Yellow for over 40%
+    } else {
+      ctx.fillStyle = '#FFF';
+    }
     ctx.fillText(
       `${avgFloodLevel.toFixed(1)}% (+${avgIncrease.toFixed(1)}) 🌊`,
       station.x - 7 * scale, 

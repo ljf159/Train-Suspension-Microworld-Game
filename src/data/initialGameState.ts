@@ -2,7 +2,6 @@ import { GameState } from '../types/index';
 import { initialStations } from './initialStations';
 import { initialTracks } from './initialTracks';
 import { initializeFailurePoints } from '../utils/floodingUtils';
-import { loadPersistedLogs } from '../utils/storageUtils';
 
 // Initialize game state with failure points
 const { updatedStations, updatedTracks } = initializeFailurePoints(
@@ -10,6 +9,33 @@ const { updatedStations, updatedTracks } = initializeFailurePoints(
   initialTracks,
   3 // Number of failure points
 );
+
+export const defaultDecisionTime = 30;
+
+// Scoring
+export const delayScorePerPassenger = 5;
+export const evacuationScorePerPassenger = -15;
+export const trappedInTrackScorePerPassenger = -50;
+
+// Flooding
+export const PROPAGATION_FLOOD_INCREASE = 6;  // 节点与节点之间传播时，接收节点水位上涨的最大量
+export const PROPAGATION_THRESHOLD = 20;   // 节点与节点之间传播时，水位上涨的阈值，超过这个阈值，才会向外传播
+export const elevationDifferenceFactor = 0.2;  // 水流向高处或低处时，水位因高差传播的系数
+export const floodDifferenceFactor = 0.1;  // 水位传播时，因为水位差传播的系数
+export const trappedThreshold = 50;
+export const floodWarningThreshold = 40;
+
+// Failure point
+export const failurePointCount = 2;
+// Flood increase setting in failure point，即对数正态分布的参数
+export const failurePointFloodIncreaseBaseMu = 5;  // 对数正态分布的众数
+export const failurePointFloodIncreaseSigmaMin = 0.3;  // 对数正态分布的方差最小值
+export const failurePointFloodIncreaseSigmaMax = 0.7;  // 对数正态分布的方差最大值
+
+// 乘客上下车比例
+export const getOnAndOffRatioMin = 0.2;
+export const getOnAndOffRatioMax = 0.4;
+
 
 export const initialGameState: GameState = {
   round: 0,
@@ -134,7 +160,7 @@ export const initialGameState: GameState = {
   gameOver: false,
   evacuatedTrainIds: [],
   lastRoundScore: undefined,
-  isPaused: false,
+  isPaused: true,
   // gameLogs: loadPersistedLogs(), // 从本地存储加载
   gameLogs: [], // 初始化空日志
   pendingActions: [], // 初始化空操作队列

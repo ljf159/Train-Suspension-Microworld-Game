@@ -1,6 +1,5 @@
 import { GameState, StationAction, PlayerSelectActionLog, Train, TrainLocation } from '../types/index';
-import { DECISION_TIME } from '../hooks/useGameState';
-import { handleEvacuation } from '../utils/trainUtils';
+import { defaultDecisionTime } from '../data/initialGameState';
 
 export const storePlayerAction = (
   state: GameState,
@@ -20,10 +19,10 @@ export const storePlayerAction = (
     targetLocation,
     timestamp: new Date().toISOString(),
     round: state.round,
-    selectTimeUsed: DECISION_TIME - state.decisionTimeRemaining
+    selectTimeUsed: defaultDecisionTime - state.decisionTimeRemaining
   };
 
-  console.log('记录新操作:', newAction);
+  //console.log('记录新操作:', newAction);
 
   return {
     ...state,
@@ -63,9 +62,10 @@ const applyAction = (state: GameState, action: PlayerSelectActionLog): GameState
         if (action.targetLocation.type === 'station') {
           const station = state.stations.find(s => s.id === action.targetLocation.id);
           if (!station) return t;
-          const { updatedStation, updatedTrain } = handleEvacuation(station, t);
+          // const { updatedStation, updatedTrain } = handleEvacuation(station, t);
+
           return {
-            ...updatedTrain,
+            ...t,
             status: 'stopped' as const
           };
         }

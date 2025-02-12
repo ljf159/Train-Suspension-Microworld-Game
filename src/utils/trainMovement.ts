@@ -9,7 +9,7 @@ export const moveTrainToNextNode = (
   allTrains: Train[]
 ): Train => {
   if (train.status !== 'running') {
-    // Update delay if train is stopped
+    // Update delay if train is stopped or trapped
     const roundsSinceLastMove = currentRound - train.lastMoveRound;
     return {
       ...train,

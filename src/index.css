@@ -44,3 +44,24 @@ body {
 .scroll-panel::-webkit-scrollbar-thumb:hover {
   background: #6B7280;
 }
+
+/* 在现有样式后添加 */
+.instructions-container {
+  background: linear-gradient(45deg, #1a202c, #2d3748);
+}
+
+.instruction-card {
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.start-button {
+  background-image: linear-gradient(45deg, #4299e1, #3182ce);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.start-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}

@@ -6,16 +6,26 @@ import {
 } from './trainScoring';
 
 export const calculateRoundScore = (
+  originalTrains: Train[],
   trains: Train[],
-  evacuatedTrainIds: number[]
+  evacuatedTrainIds: number[],
 ): RoundScore => {
   // 1. 计算每个列车的得分
   const trainScores = trains.map(train => {
+
     const delayScore = calculateTrainDelayScore(train);
-    const evacuationScore = evacuatedTrainIds.includes(train.id) 
-      ? calculateEvacuationScore(train) 
-      : 0;
+    // console.log('分数delayScore', delayScore);
+
+    let evacuationScore = 0;
+
+    if (evacuatedTrainIds.includes(train.id)) {
+      // 找到originalTrains中与train.id相同的列车
+      const originalTrain = originalTrains.find(t => t.id === train.id);
+      evacuationScore = calculateEvacuationScore(originalTrain!);
+    } 
+
     const trackStopScore = calculateTrackStopScore(train);
+    // console.log('分数trackStopScore', trackStopScore);
     
     return {
       trainId: train.id,

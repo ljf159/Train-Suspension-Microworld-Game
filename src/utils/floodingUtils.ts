@@ -1,13 +1,12 @@
 import { Station, Track } from '../types/index';
-
-const PROPAGATION_FLOOD_INCREASE = 5;  // 减小传播增量
-const PROPAGATION_THRESHOLD = 20;
+import { PROPAGATION_FLOOD_INCREASE, PROPAGATION_THRESHOLD, failurePointCount, elevationDifferenceFactor, floodDifferenceFactor } from '../data/initialGameState';
+import { failurePointFloodIncreaseBaseMu, failurePointFloodIncreaseSigmaMin, failurePointFloodIncreaseSigmaMax } from '../data/initialGameState';
 
 // 新增对数正态分布生成函数
 const generateLognormalIncrease = (): number => {
-  // 参数设定（众数=5，即概率密度最大值在5）
-  const baseMu = Math.log(5);
-  const sigma = 0.3 + Math.random() * 0.4; // 随机方差（0.3-0.7）
+  // 参数设定（众数，即概率密度最大值在）
+  const baseMu = Math.log(failurePointFloodIncreaseBaseMu);
+  const sigma = failurePointFloodIncreaseSigmaMin + Math.random() * (failurePointFloodIncreaseSigmaMax - failurePointFloodIncreaseSigmaMin); // 随机方差（0.3-0.7）
   const mu = baseMu + sigma * sigma; // 根据众数公式调整μ
   
   // 生成正态分布随机数
@@ -19,7 +18,7 @@ const generateLognormalIncrease = (): number => {
 export const initializeFailurePoints = (
   stations: Station[],
   tracks: Track[],
-  failurePointCount: number = 2
+  _failurePointCount: number = failurePointCount
 ): { updatedStations: Station[]; updatedTracks: Track[] } => {
   // 创建候选节点列表，确保每个节点有唯一标识
   const candidates = [
@@ -35,7 +34,7 @@ export const initializeFailurePoints = (
   }
 
   // 取前failurePointCount个元素
-  const selectedPoints = shuffled.slice(0, failurePointCount - 1);
+  const selectedPoints = shuffled.slice(0, _failurePointCount - 1);
 
   // 更新stations
   const updatedStations = stations.map(station => ({
@@ -88,6 +87,9 @@ export const updateFloodLevels = (
     // 故障点涨水逻辑（后涨水）
     if (station.isFailurePoint) {
       increase = generateLognormalIncrease();
+
+      // console.log(`站点${station.id}，站点洪水增加:${increase}`);
+
       newFloodLevel = Math.min(100, newFloodLevel + increase);
     }
 
@@ -112,6 +114,9 @@ export const updateFloodLevels = (
     nodes: track.nodes.map(node => {
       if (node.isFailurePoint) {
         const increase = generateLognormalIncrease();
+
+        // console.log(`失效节点为${node.id}，轨道节点洪水增加:${increase}`);
+
         const newFloodLevel = Math.min(100, node.floodLevel + increase);
         return {
           ...node,
@@ -141,13 +146,17 @@ export const updateFloodLevels = (
       // 计算高度影响系数：
       // 1. 当水流向低处(elevationDifference > 0)时，传播会加快
       // 2. 当水流向高处(elevationDifference < 0)时，传播会减慢
-      const elevationFactor = 1 + (elevationDifference * 0.2);
+      const elevationFactor = 1 + (elevationDifference * elevationDifferenceFactor);
       
       const propagationAmount = Math.min(
         PROPAGATION_FLOOD_INCREASE,
-        Math.ceil(floodDifference * 0.3 * elevationFactor)
+        Math.ceil(floodDifference * floodDifferenceFactor * elevationFactor)
       );
       const newLevel = Math.min(100, targetLevel + propagationAmount);
+
+      // console.log(`真实值是${floodDifference * 0.1 * elevationFactor}`);
+      // console.log(`从${targetLevel}变为${newLevel}，增加了${propagationAmount}`);
+
       return {
         floodLevel: newLevel,
         increase: propagationAmount

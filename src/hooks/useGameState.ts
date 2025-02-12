@@ -8,8 +8,7 @@ import {
 import { initialGameState } from '../data/initialGameState.ts';
 import { updateGameState } from '../utils/gameUtils';
 import { storePlayerAction } from '../utils/actionHandlers';
-
-export const DECISION_TIME = 30;
+import { defaultDecisionTime } from '../data/initialGameState';
 
 interface GameStateHook extends GameState {
   handleTrainSelect: (train: Train, location: TrainLocation) => void;
@@ -70,7 +69,7 @@ export const useGameState = (): GameStateHook => {
 
       // 如果时间已经用完，直接进入下一轮，不执行已有选择的任何操作
       if (prev.decisionTimeRemaining <= 0) {
-        const decisionTimeUsed = DECISION_TIME;
+        const decisionTimeUsed = defaultDecisionTime;
         return updateGameState({
           ...prev,
           //selectedTrains: [], // 清空已选位置
@@ -80,7 +79,7 @@ export const useGameState = (): GameStateHook => {
       }
       
       // 如果时间未用完，则处理所有暂存操作，并进入下一轮
-      const decisionTimeUsed = DECISION_TIME - prev.decisionTimeRemaining;
+      const decisionTimeUsed = defaultDecisionTime - prev.decisionTimeRemaining;
       // 处理所有暂存操作
       //const processedState = processPendingActions(prev);
 
@@ -106,7 +105,7 @@ export const useGameState = (): GameStateHook => {
         action => action.targetTrain.id !== trainId
       )
     }));
-    console.log('取消操作', trainId);
+    // console.log('取消操作', trainId);
   };
 
   useEffect(() => {
@@ -157,7 +156,7 @@ export const useGameState = (): GameStateHook => {
       console.table(latestLog.trains);
       console.table(latestLog.stations);
       console.table(latestLog.tracks);
-      console.log('Score:', `+${latestLog.scoreChange} → ${latestLog.totalScore}`);
+      console.log('Score:', `Score Change: ${latestLog.scoreChange} → Total Score: ${latestLog.totalScore}`);
       console.groupEnd();
     }
   }, [gameState.round]);

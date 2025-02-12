@@ -53,7 +53,7 @@ export const drawLegend: CanvasDrawer = (ctx: CanvasRenderingContext2D, minEleva
   ctx.arc(padding + iconSize, padding + lineHeight * 3, iconSize * 0.8, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = '#FFF';
-  ctx.fillText('Stopped Train', padding + iconSize + padding, padding + lineHeight * 3);
+  ctx.fillText('Stopped or Trapped Train', padding + iconSize + padding, padding + lineHeight * 3);
 
   // Selected Location
   ctx.beginPath();
@@ -65,11 +65,38 @@ export const drawLegend: CanvasDrawer = (ctx: CanvasRenderingContext2D, minEleva
   ctx.fillStyle = '#FFF';
   ctx.fillText('Selected Location', padding + iconSize + padding, padding + lineHeight * 4);
 
+  // failure point
+  ctx.beginPath();
+  ctx.arc(padding + iconSize, padding + lineHeight * 5, iconSize * 0.8, 0, Math.PI * 2);
+  ctx.strokeStyle = '#EF4444';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = '#FFF';
+  ctx.fillText('Failure Point', padding + iconSize + padding, padding + lineHeight * 5);
+
+  // pump
+  ctx.beginPath();
+  ctx.strokeStyle = '#3B82F6';
+  ctx.lineWidth = 2;
+  ctx.arc(padding + iconSize, padding + lineHeight * 6, iconSize * 0.8, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillStyle = '#FFF';
+  ctx.fillText('Pump Active', padding + iconSize + padding, padding + lineHeight * 6);
+
+  // 添加泵工作的文字提示
+  ctx.fillStyle = '#3B82F6';
+  ctx.font = `${fontSize}px Arial`;
+  ctx.fillText(
+    '⚡️', 
+    padding + iconSize + iconSize * 0, 
+    padding + lineHeight * 6 - iconSize * 0.6
+  );
+
   // 在现有图例下方添加高程渐变图例
   const ELEVATION_LEGEND_WIDTH = 80 * scale;
   const ELEVATION_LEGEND_HEIGHT = 10 * scale;
   const ELEVATION_TEXT_HEIGHT = 14 * scale;
-  const ELEVATION_OFFSET = lineHeight * 1;
+  const ELEVATION_OFFSET = lineHeight * 3;
 
   // 创建高程渐变
   const gradient = ctx.createLinearGradient(
@@ -96,16 +123,16 @@ export const drawLegend: CanvasDrawer = (ctx: CanvasRenderingContext2D, minEleva
   ctx.fillText(
     `${minElevation.toFixed(0)}m`,
     padding,
-    padding + lineHeight * 5 + ELEVATION_LEGEND_HEIGHT + ELEVATION_TEXT_HEIGHT + ELEVATION_OFFSET
+    padding + lineHeight * 5 + ELEVATION_LEGEND_HEIGHT + ELEVATION_TEXT_HEIGHT + ELEVATION_OFFSET * 0.85
   );
   ctx.fillText(
     `${maxElevation.toFixed(0)}m`,
     padding + ELEVATION_LEGEND_WIDTH - ctx.measureText(`${maxElevation.toFixed(0)}m`).width,
-    padding + lineHeight * 5 + ELEVATION_LEGEND_HEIGHT + ELEVATION_TEXT_HEIGHT + ELEVATION_OFFSET
+    padding + lineHeight * 5 + ELEVATION_LEGEND_HEIGHT + ELEVATION_TEXT_HEIGHT + ELEVATION_OFFSET * 0.85
   );
   ctx.fillText(
     'Elevation (m)',
     padding,
-    padding + lineHeight * 5 - ELEVATION_TEXT_HEIGHT + ELEVATION_OFFSET * 1.5
+    padding + lineHeight * 5 - ELEVATION_TEXT_HEIGHT + ELEVATION_OFFSET * 1.15
   );
 };

@@ -1,4 +1,4 @@
-import { Train, Track } from '../types';
+import { Train, Track } from '../types/index';
 
 export const findTrainAtLocation = (
   locationId: number,

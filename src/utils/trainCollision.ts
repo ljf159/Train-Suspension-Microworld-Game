@@ -41,11 +41,11 @@ export const getCollisionImminentTrains = (
       if (train.direction === 'forward' && otherTrain.direction === 'forward') {
         if (trainIndexInLine < otherTrainIndexInLine) {
           // 判断前车是否停车，如果停车，则将这对列车对推入trainCollisionPairs
-          if (train.status === 'stopped') {
+          if (train.status === 'stopped' || train.status === 'trapped') {
             trainCollisionPairs.push({trainA: train, trainB: otherTrain});
           }
         } else {
-          if (otherTrain.status === 'stopped') {
+          if (otherTrain.status === 'stopped' || otherTrain.status === 'trapped') {
             trainCollisionPairs.push({trainA: otherTrain, trainB: train});
           }
         }
@@ -53,11 +53,11 @@ export const getCollisionImminentTrains = (
       // 如果两车的方向都是backward
       if (train.direction === 'backward' && otherTrain.direction === 'backward') {
         if (trainIndexInLine > otherTrainIndexInLine) {
-          if (otherTrain.status === 'stopped') {
+          if (otherTrain.status === 'stopped' || otherTrain.status === 'trapped') {
             trainCollisionPairs.push({trainA: otherTrain, trainB: train});
           }
         } else {
-          if (train.status === 'stopped') {
+          if (train.status === 'stopped' || train.status === 'trapped') {
             trainCollisionPairs.push({trainA: train, trainB: otherTrain});
           }
         }

@@ -1,21 +1,4 @@
-import { Train, Track, Station } from '../types/index';
-
-export const handleEvacuation = (
-  station: Station,
-  train: Train
-): { updatedStation: Station; updatedTrain: Train } => {
-  return {
-    updatedStation: {
-      ...station,
-      passengers: station.passengers + train.passengers
-    },
-    updatedTrain: {
-      ...train,
-      passengers: 0,
-      status: 'stopped'
-    }
-  };
-};
+import { Train, Track } from '../types/index';
 
 // 新增位置标识函数
 export const getTrainPositionIdentifier = (train: Train, tracks: Track[]): string => {
