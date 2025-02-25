@@ -59,7 +59,7 @@ export const drawTracks = (
       ctx.arc(node.x, node.y, trackNodeRadius, 0, Math.PI * 2);
       ctx.fillStyle = getElevationColor(node.elevation, minElevation, maxElevation);
       ctx.fill();
-      ctx.strokeStyle = '#1F2937';
+      ctx.strokeStyle = '#1F2937';  // 轨道节点边框颜色
       ctx.lineWidth = 0.5 * scale;
       ctx.stroke();
 

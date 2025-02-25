@@ -122,10 +122,10 @@ export const drawTrains = (
     ctx.fill();
 
     // Draw passenger count
-    ctx.font = `${5 * scale}px Arial`;
-    ctx.fillStyle = '#FFFFFF';
-    ctx.textAlign = 'center';
-    ctx.fillText(`${train.passengers} 👥`, x, y + trainRadius + 5 * scale);
+    // ctx.font = `${5 * scale}px Arial`;
+    // ctx.fillStyle = '#FFFFFF';
+    // ctx.textAlign = 'center';
+    // ctx.fillText(`${train.passengers} 👥`, x, y + trainRadius + 5 * scale);
 
     // Draw direction arrow if running
     if (train.status === 'running' && nextX !== undefined && nextY !== undefined) {

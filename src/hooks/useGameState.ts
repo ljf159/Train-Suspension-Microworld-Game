@@ -150,7 +150,7 @@ export const useGameState = (): GameStateHook => {
 
   useEffect(() => {
     if (gameState.round > 0) {
-      const latestLog = gameState.gameLogs[0];
+      const latestLog = gameState.gameLogs[gameState.gameLogs.length - 1];
       console.groupCollapsed(`Round ${latestLog.round} Log`);
       console.log('Timestamp:', latestLog.timestamp);
       console.table(latestLog.trains);

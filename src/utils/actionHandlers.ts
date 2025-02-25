@@ -1,5 +1,7 @@
 import { GameState, StationAction, PlayerSelectActionLog, Train, TrainLocation } from '../types/index';
 import { defaultDecisionTime } from '../data/initialGameState';
+import { getTrainLocation } from './locationUtils';
+// import { reverseTrainDirection, stopTrain } from './gameUtils';
 
 export const storePlayerAction = (
   state: GameState,
@@ -94,4 +96,66 @@ const applyAction = (state: GameState, action: PlayerSelectActionLog): GameState
 //       action => action.targetTrain.id !== trainId
 //     )
 //   };
-// }; 
+// };
+
+export const handleRLAction = (
+  state: GameState,
+  train: Train,
+  actionType: 'evacuate' | 'reverse' | 'stop' | 'start' | 'monitor'
+): GameState => {
+  // 实现具体的动作处理逻辑
+  switch (actionType) {
+    case 'evacuate':
+      return {
+        ...state,
+        pendingActions: [...state.pendingActions, {
+          type: 'evacuate',
+          targetTrain: train,
+          targetLocation: getTrainLocation(train, state.stations, state.tracks)!,
+          timestamp: new Date().toISOString(),
+          round: state.round,
+          selectTimeUsed: defaultDecisionTime - state.decisionTimeRemaining
+        }]
+      };
+    case 'reverse':
+      return {
+        ...state,
+        pendingActions: [...state.pendingActions, {
+          type: 'reverse',
+          targetTrain: train,
+          targetLocation: getTrainLocation(train, state.stations, state.tracks)!,
+          timestamp: new Date().toISOString(),
+          round: state.round,
+          selectTimeUsed: defaultDecisionTime - state.decisionTimeRemaining
+        }]
+      };
+    case 'stop':
+      return {
+        ...state,
+        pendingActions: [...state.pendingActions, {
+          type: 'stop',
+          targetTrain: train,
+          targetLocation: getTrainLocation(train, state.stations, state.tracks)!,
+          timestamp: new Date().toISOString(),
+          round: state.round,
+          selectTimeUsed: defaultDecisionTime - state.decisionTimeRemaining
+        }]
+      };
+    case 'start':
+      return {
+        ...state,
+        pendingActions: [...state.pendingActions, {
+          type: 'start',
+          targetTrain: train,
+          targetLocation: getTrainLocation(train, state.stations, state.tracks)!,
+          timestamp: new Date().toISOString(),
+          round: state.round,
+          selectTimeUsed: defaultDecisionTime - state.decisionTimeRemaining
+        }]
+      };
+    case 'monitor':
+      return state;
+    default:
+      return state;
+  }
+}; 

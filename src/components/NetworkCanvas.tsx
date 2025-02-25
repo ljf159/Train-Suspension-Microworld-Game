@@ -18,6 +18,14 @@ interface NetworkCanvasProps {
   }>;
   onTrainSelect: (train: Train, location: TrainLocation) => void;
   isPaused: boolean;
+  // pendingActions: Array<{ 
+  //   type: string; 
+  //   targetTrain: Train; 
+  //   targetLocation: TrainLocation; 
+  //   timestamp: string; 
+  //   round: number; 
+  //   selectTimeUsed: number 
+  // }>;
 }
 
 export const NetworkCanvas: React.FC<NetworkCanvasProps> = ({
@@ -27,6 +35,7 @@ export const NetworkCanvas: React.FC<NetworkCanvasProps> = ({
   selectedTrains,
   onTrainSelect,
   isPaused
+  // pendingActions
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -130,6 +139,23 @@ export const NetworkCanvas: React.FC<NetworkCanvasProps> = ({
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
       }
+
+      // // 在渲染时添加RL动作指示
+      // trains.forEach(train => {
+      //   const action = pendingActions.find(a => a.targetTrain.id === train.id);
+      //   if (action) {
+      //     const location = getTrainLocation(train, stations, tracks);
+      //     if (location) {
+      //       const x = location.x;
+      //       const y = location.y;
+      //       ctx.beginPath();
+      //       ctx.strokeStyle = '#FF0000';
+      //       ctx.arc(x, y, 8 * scale, 0, Math.PI * 2);
+      //       ctx.stroke();
+      //       ctx.fillText(action.type.toUpperCase(), x, y - 10 * scale);
+      //     }
+      //   }
+      // });
     };
 
     draw();

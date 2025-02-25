@@ -18,7 +18,7 @@ export interface Station {
   y: number;
   passengers: number;
   isTransfer: boolean;
-  connected: number[];
+  connected: number[]; // 连接的轨道id
   floodLevel: number;
   isFailurePoint: boolean;
   elevation: number;

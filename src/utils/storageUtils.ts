@@ -1,13 +1,13 @@
 import { GameLog } from '../types/index';
 
-const LOG_STORAGE_KEY = 'metro_game_logs_v1';
+const LOG_STORAGE_KEY = 'metro_game_logs_v2';
 
 // 保存日志到localStorage
 export const persistLogs = (logs: GameLog[]) => {
   try {
-    const maxLogs = 100; // 最多存储100轮
+    const maxLogs = 500; // 最多存储100轮
     const data = {
-      version: 1.3,
+      version: 2.1,
       lastUpdated: new Date().toISOString(),
       logs: logs.slice(0, maxLogs)
     };

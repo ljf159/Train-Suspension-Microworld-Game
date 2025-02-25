@@ -127,13 +127,22 @@ export const updateGameState = (state: GameState): GameState => {
       
       return {
         id: train.id,
+        stationId: train.stationId,
+        trackId: train.trackId,
+        nodePosition: train.nodePosition,
+        capacity: train.capacity,
         passengersChange: train.passengers - original.passengers,
         currentPassengers: train.passengers,
         statusChange: train.status !== original.status ? 
           `${original.status}→${train.status}` : undefined,
+        currentStatus: train.status,
         directionChange: train.direction !== original.direction ? 
           `${original.direction}→${train.direction}` : undefined,
-        positionChange: `${prevPos} → ${newPos}`
+        currentDirection: train.direction,
+        positionChange: `${prevPos} → ${newPos}`,
+        delayedRounds: train.delayedRounds,
+        lastMoveRound: train.lastMoveRound,
+        lineId: train.lineId,
       };
     }),
 
@@ -144,6 +153,8 @@ export const updateGameState = (state: GameState): GameState => {
       return {
         id: station.id,
         // floodLevelChange: station.floodLevel - (original.previousFloodLevel || 0),
+        elevation: station.elevation,
+        isTransfer: station.isTransfer,
         currentFloodLevel: station.floodLevel,
         passengersChange: station.passengers - original.passengers,
         currentPassengers: station.passengers,
@@ -184,7 +195,7 @@ export const updateGameState = (state: GameState): GameState => {
 
   };
 
-  console.log('当前回合log:', newLog);
+  // console.log('当前回合log:', newLog);
 
   // console.log('当前回合操作记录:', {
   //   round: state.round,
@@ -194,7 +205,9 @@ export const updateGameState = (state: GameState): GameState => {
   // });
 
   // 持久化存储日志
-  persistLogs([newLog, ...state.gameLogs].slice(0, 100));
+  persistLogs([...state.gameLogs, newLog].slice(0, 500));
+
+  console.log('gameLog是什么', state.gameLogs);
 
   return {
     ...state,
@@ -207,7 +220,7 @@ export const updateGameState = (state: GameState): GameState => {
     decisionTimeRemaining: defaultDecisionTime,
     evacuatedTrainIds: [],  // 重置已疏散列车列表
     selectedTrains: [],   // 确保清空选择
-    gameLogs: [newLog, ...state.gameLogs],
+    gameLogs: [...state.gameLogs, newLog],
     pendingActions: [], // 清空前确认有数据
   };
 };
