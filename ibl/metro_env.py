@@ -67,6 +67,14 @@ class MetroEnv(gym.Env):
         
         # 连接到服务器
         self.connection = await websockets.connect(self.ws_uri)
+
+        # 清空缓冲区
+        while True:
+            try:
+                await asyncio.wait_for(self.connection.recv(), timeout=0.1)
+            except (asyncio.TimeoutError, websockets.exceptions.ConnectionClosed):
+                break
+
         reset_msg = [{"trainId": 0, "actionType": "reset"}]
         
         if self.use_msgpack:
@@ -74,6 +82,12 @@ class MetroEnv(gym.Env):
             response = await self.connection.recv()
 
             response = msgpack.unpackb(response, raw=False, use_list=True)
+
+            while True:
+                try:
+                    await asyncio.wait_for(self.connection.recv(), timeout=0.1)
+                except (asyncio.TimeoutError, websockets.exceptions.ConnectionClosed):
+                    break
             
             return response
 
@@ -120,6 +134,12 @@ class MetroEnv(gym.Env):
             await self.connection.send(msgpack.packb(action))
 
             response = await self.connection.recv()
+
+            while True:
+                try:
+                    await asyncio.wait_for(self.connection.recv(), timeout=0.1)
+                except (asyncio.TimeoutError, websockets.exceptions.ConnectionClosed):
+                    break
             
             return msgpack.unpackb(response, raw=False)
         # else:

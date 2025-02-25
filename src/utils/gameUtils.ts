@@ -207,7 +207,7 @@ export const updateGameState = (state: GameState): GameState => {
   // 持久化存储日志
   persistLogs([...state.gameLogs, newLog].slice(0, 500));
 
-  console.log('gameLog是什么', state.gameLogs);
+  // console.log('gameLog是什么', state.gameLogs);
 
   return {
     ...state,

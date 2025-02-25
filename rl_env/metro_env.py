@@ -64,18 +64,33 @@ class MetroEnv(gym.Env):
         # 关闭之前的连接
         if self.connection:
             await self.connection.close()
-        
+
         # 连接到服务器
         self.connection = await websockets.connect(self.ws_uri)
-        reset_msg = {"actionType": "reset"}
+        
+        # 新增：在发送reset前清空缓冲区
+        while True:
+            try:
+                await asyncio.wait_for(self.connection.recv(), timeout=0.1)
+            except (asyncio.TimeoutError, websockets.exceptions.ConnectionClosed):
+                break
+
+        reset_msg = [{"trainId": 0, "actionType": "reset"}]
         
         if self.use_msgpack:
             await self.connection.send(msgpack.packb(reset_msg))
             response = await self.connection.recv()
 
-            response = msgpack.unpackb(response, raw=False, use_list=True)
-            
-            return response
+            # 修改缓冲区清理方式：改为接收所有剩余消息
+            while True:
+                try:
+                    await asyncio.wait_for(self.connection.recv(), timeout=0.1)
+                except (asyncio.TimeoutError, websockets.exceptions.ConnectionClosed):
+                    break
+
+            parse = msgpack.unpackb(response, raw=False, use_list=True)
+          
+            return parse
 
         # else:
         #     await self.connection.send(json.dumps(reset_msg))
@@ -118,10 +133,18 @@ class MetroEnv(gym.Env):
         
         if self.use_msgpack:
             await self.connection.send(msgpack.packb(action))
-
-            response = await self.connection.recv()
             
-            return msgpack.unpackb(response, raw=False)
+            # 移除人为延迟，改用确定性等待
+            response = await self.connection.recv()  # 直接等待最新响应
+            
+            while True:
+                try:
+                    await asyncio.wait_for(self.connection.recv(), timeout=0.1)
+                except (asyncio.TimeoutError, websockets.exceptions.ConnectionClosed):
+                    break
+            
+            parsed = msgpack.unpackb(response, raw=False)
+            return parsed
         # else:
         #     await self.connection.send(json.dumps(action))
         #     response = await self.connection.recv()

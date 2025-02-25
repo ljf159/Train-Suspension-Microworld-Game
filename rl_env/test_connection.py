@@ -55,8 +55,8 @@ async def test_env():
 
         print('游戏结束')
 
-    except Exception as e:
-        print(f"测试失败: {str(e)}")
+    # except Exception as e:
+    #     print(f"测试失败: {str(e)}")
     finally:
         await env.close()
 

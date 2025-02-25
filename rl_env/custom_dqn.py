@@ -8,6 +8,10 @@ import asyncio
 from metro_env import MetroEnv
 import json
 import websockets
+import matplotlib.pyplot as plt
+import os
+import time
+from IPython import display
 
 class QNetwork(nn.Module):
     """自定义Q网络处理地铁环境观察"""
@@ -67,6 +71,8 @@ class DQNAgent:
         self.epsilon_decay = 0.995 # 探索率衰减
         self.update_target_every = 100 # 更新目标网络的频率
         self.steps = 0 # 步数
+        self.episode_rewards = []  # 记录每轮的总奖励
+        self.moving_avg = []       # 记录移动平均
 
     def _get_obs_dim(self):
         """动态获取观察空间维度"""
@@ -191,7 +197,7 @@ class DQNAgent:
             total_reward = obs['score']
             done = False
             
-            while not done:
+            for _ in range(30):
                 # 为每个列车独立决策
                 action_indices = []
                 state_tensor = torch.FloatTensor(state)
@@ -236,6 +242,7 @@ class DQNAgent:
                 
                 # 执行动作
                 actions = self._action_mapping(action_indices)
+                
                 next_obs = await self.env.step(actions)
                 next_state = self._parse_observation(next_obs)
 
@@ -258,13 +265,22 @@ class DQNAgent:
                 
                 self.steps += 1
 
-                print('actions是什么', actions)
-                print('总分是什么', total_reward)
             
             # 衰减探索率
             self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
             
             print(f"Episode: {episode+1}, Total Reward: {total_reward:.2f}, Epsilon: {self.epsilon:.2f}")
+            
+            # 添加记录
+            self.episode_rewards.append(total_reward)
+            self.moving_avg.append(np.mean(self.episode_rewards[-100:]))  # 计算100轮移动平均
+
+            # 在训练循环内添加
+            if episode % 10 == 0:  # 每10轮更新一次
+                self._plot_realtime(episode)
+
+        # 训练结束后添加可视化
+        self._plot_training_progress()
 
     def _replay(self):
         """执行经验回放更新网络"""
@@ -316,9 +332,52 @@ class DQNAgent:
         self.optimizer.load_state_dict(checkpoint['optimizer'])
         self.epsilon = checkpoint['epsilon']
 
+    def _plot_training_progress(self):
+        """绘制训练进度图"""
+        plt.figure(figsize=(12, 6))
+        
+        # 原始奖励曲线
+        plt.plot(self.episode_rewards, 
+                alpha=0.3, 
+                color='blue',
+                label='Reward per episode')
+        
+        # 移动平均曲线
+        plt.plot(self.moving_avg,
+                linewidth=2,
+                color='red',
+                label='Moving Average (100)')
+        
+        plt.title('DQN Training Progress')
+        plt.xlabel('Episode')
+        plt.ylabel('Total Reward')
+        plt.legend()
+        plt.grid(True)
+        
+        # 创建保存目录
+        os.makedirs('training_plots', exist_ok=True)
+        plt.savefig(f'training_plots/dqn_training_{int(time.time())}.png')
+        plt.close()
+
+    def _plot_realtime(self, current_episode):
+        """实时更新训练曲线"""
+        plt.figure(figsize=(10,5))
+        plt.clf()
+        
+        plt.plot(self.episode_rewards, 'b-', alpha=0.3)
+        plt.plot(self.moving_avg, 'r-', linewidth=2)
+        
+        plt.title(f'Training Progress (Current Episode: {current_episode})')
+        plt.xlabel('Episode')
+        plt.ylabel('Total Reward')
+        plt.grid(True)
+        
+        display.clear_output(wait=True)
+        display.display(plt.gcf())
+        plt.close()
+
 async def main():
     env = MetroEnv()
-
     agent = DQNAgent(env)
     
     try:

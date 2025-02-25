@@ -58,13 +58,25 @@ export class GameServer {
         try {
           const actions = msgpack.decode(message);
 
-          // 遍历所有动作并执行
-          actions.forEach((action: { trainId: number, actionType: string }) => {
-            this.handleAction(action);
-          });
+          // 判断是否包含reset
+          const isReset = actions.some((action: { actionType: string }) => action.actionType === 'reset');
 
-          // 更新游戏逻辑（保持只执行一次）
-          const newState = this.step();
+          let newState = this.gameState;
+
+          if (isReset) {
+            newState = {
+              ...initialGameState,
+              isPaused: false
+            };
+          } else {
+            // 遍历所有动作并执行
+            actions.forEach((action: { trainId: number, actionType: string }) => {
+              this.handleAction(action);
+            });
+            newState = this.step();
+          }
+
+          this.gameState = newState;
 
           ws.send(this.serializeState(newState));
         } catch (error) {
